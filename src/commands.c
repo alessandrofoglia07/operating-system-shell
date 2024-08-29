@@ -10,7 +10,8 @@
 
 #include "ANSI_escapes.h"
 
-void handle_command(char **args, char *cwd) {
+void handle_command(char **args, char *cwd, int *pRedirect_input, int *pRedirect_output, char **pInput_file,
+                    char **pOutput_file) {
     if (strcmp(args[0], "cd") == 0) {
         return cd(args);
     }
@@ -40,10 +41,10 @@ void handle_command(char **args, char *cwd) {
     }
 
     if (strcmp(args[0], "exit") == 0) {
-        return exit(args);
+        return exit_shell(args);
     }
 
-    run(args);
+    run(args, pRedirect_input, pRedirect_output, pInput_file, pOutput_file);
 }
 
 void cd(char **args) {
@@ -117,7 +118,7 @@ void unset(char **args) {
     }
 }
 
-void exit(char **args) {
+void exit_shell(char **args) {
     if (args[1] != NULL) {
         fprintf(stderr, "exit: unexpected arguments\n");
         return;

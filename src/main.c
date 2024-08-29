@@ -36,6 +36,6 @@ int main() {
 
         tokenize(input, args, &num_args, &redirect_input, &redirect_output, &input_file, &output_file);
 
-        handle_command(args, cwd);
+        handle_command(args, cwd, &redirect_input, &redirect_output, &input_file, &output_file);
     }
 }
