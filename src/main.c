@@ -4,12 +4,16 @@
 #include <unistd.h>
 
 #include "ANSI_escapes.h"
-#include "handle_command.h"
+#include "commands.h"
 #include "utils.h"
+#include "aliases.h"
 
 #define MAX_INPUT_SIZE 1024
 #define MAX_CWD_SIZE 1024
 #define MAX_ARGS 64
+
+Alias aliases[MAX_ALIASES];
+short num_aliases;
 
 int main() {
     char input[MAX_INPUT_SIZE];
@@ -21,6 +25,8 @@ int main() {
             exit(EXIT_FAILURE);
         }
         input[strcspn(input, "\n")] = '\0';
+
+        strcpy(input, expand_alias(input));
 
         char *args[64];
         int num_args = 0;

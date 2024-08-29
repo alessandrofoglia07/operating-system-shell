@@ -1,4 +1,4 @@
-#include "handle_command.h"
+#include "commands.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <dirent.h>
+
+#include "ANSI_escapes.h"
 
 void handle_command(char **args, char *cwd) {
     if (strcmp(args[0], "cd") == 0) {
@@ -18,6 +20,22 @@ void handle_command(char **args, char *cwd) {
 
     if (strcmp(args[0], "ls") == 0) {
         return ls(args, cwd);
+    }
+
+    if (strcmp(args[0], "clear") == 0) {
+        return clear();
+    }
+
+    if (strcmp(args[0], "echo") == 0) {
+        return echo(args);
+    }
+
+    if (strcmp(args[0], "set") == 0) {
+        return set(args);
+    }
+
+    if (strcmp(args[0], "unset") == 0) {
+        return unset(args);
     }
 
     if (strcmp(args[0], "exit") == 0) {
@@ -60,6 +78,42 @@ void ls(char **args, const char *cwd) {
     }
     printf("\n");
     closedir(dir);
+}
+
+void clear() {
+    printf(ANSI_CONSOLE_CLEAR);
+}
+
+void echo(char **args) {
+    for (int i = 1; args[i] != NULL; i++) {
+        printf("%s ", args[i]);
+    }
+    printf("\n");
+}
+
+void set(char **args) {
+    if (args[1] == NULL) {
+        fprintf(stderr, "set: missing argument\n");
+        return;
+    }
+    const char *name = strtok(args[1], "=");
+    const char *value = strtok(NULL, "=");
+    if (name == NULL || value == NULL) {
+        fprintf(stderr, "Usage: set name=value\n");
+    }
+    if (setenv(name, value, 1) < 0) {
+        perror("setenv failed");
+    }
+}
+
+void unset(char **args) {
+    if (args[1] == NULL) {
+        fprintf(stderr, "unset: missing argument\n");
+        return;
+    }
+    if (unsetenv(args[1]) < 0) {
+        perror("unsetenv failed");
+    }
 }
 
 void exit(char **args) {
