@@ -1,5 +1,6 @@
 #include "commands.h"
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -123,7 +124,11 @@ void exit_shell(char **args) {
         fprintf(stderr, "exit: unexpected arguments\n");
         return;
     }
-    exit(EXIT_SUCCESS);
+    printf("Do you really want to exit? (y/n) ");
+    const char c = getchar();
+    if (toupper(c) == 'y') {
+        exit(EXIT_SUCCESS);
+    }
 }
 
 void run(char **args, int *pRedirect_input, int *pRedirect_output, char **pInput_file,

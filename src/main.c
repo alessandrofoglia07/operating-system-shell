@@ -1,3 +1,4 @@
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,6 +15,9 @@ Alias aliases[MAX_ALIASES];
 short num_aliases;
 
 int main() {
+    signal(SIGINT, exit_shell);
+    signal(SIGTSTP, SIG_IGN);
+
     char input[MAX_INPUT_SIZE];
     int redirect_output = 0, redirect_input = 0;
     char *input_file = NULL, *output_file = NULL;
@@ -26,6 +30,10 @@ int main() {
             exit(EXIT_FAILURE);
         }
         input[strcspn(input, "\n")] = '\0'; // Remove trailing newline
+
+        if (strlen(input) == 0) {
+            continue;
+        }
 
         strcpy(input, expand_alias(input));
 
