@@ -7,7 +7,10 @@ include_directories(include)
 
 set(RESOURCES src/main.c
         src/utils.c
-        include/utils.h)
+        include/utils.h
+        include/ANSI_escapes.h
+        src/handle_command.c
+        include/handle_command.h)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)
 
