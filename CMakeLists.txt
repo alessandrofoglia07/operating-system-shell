@@ -5,7 +5,9 @@ set(CMAKE_C_STANDARD 11)
 
 include_directories(include)
 
-set(RESOURCES src/main.c)
+set(RESOURCES src/main.c
+        src/utils.c
+        include/utils.h)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)
 
