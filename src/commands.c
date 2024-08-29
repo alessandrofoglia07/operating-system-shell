@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <dirent.h>
+#include <fcntl.h>
 
 #include "ANSI_escapes.h"
 
@@ -124,11 +125,43 @@ void exit(char **args) {
     exit(EXIT_SUCCESS);
 }
 
-void run(char **args) {
+void run(char **args, int *pRedirect_input, int *pRedirect_output, char **pInput_file,
+         char **pOutput_file) {
     // create child process
     const pid_t pid = fork();
     if (pid == 0) {
-        // child process, execute command
+        // child process
+
+        // handle output redirection
+        if (*pRedirect_output) {
+            const int fd = open(*pOutput_file, O_WRONLY | O_CREAT | O_TRUNC, 0644); // open file for writing
+            if (fd < 0) {
+                perror("open failed");
+                exit(EXIT_FAILURE);
+            }
+            // redirect stdout to file
+            if (dup2(fd, STDOUT_FILENO) < 0) {
+                perror("dup2 failed");
+                exit(EXIT_FAILURE);
+            }
+            close(fd);
+        }
+
+        if (*pRedirect_input) {
+            const int fd = open(*pInput_file, O_RDONLY); // open file for reading
+            if (fd < 0) {
+                perror("open failed");
+                exit(EXIT_FAILURE);
+            }
+            // redirect stdin to file
+            if (dup2(fd, STDIN_FILENO) < 0) {
+                perror("dup2 failed");
+                exit(EXIT_FAILURE);
+            }
+            close(fd);
+        }
+
+        // execute command
         if (execvp(args[0], args) < 0) {
             perror("execvp failed");
         }
@@ -139,4 +172,9 @@ void run(char **args) {
         // parent process
         wait(NULL);
     }
+
+    *pRedirect_output = 0;
+    *pRedirect_input = 0;
+    *pInput_file = NULL;
+    *pOutput_file = NULL;
 }

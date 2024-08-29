@@ -17,6 +17,9 @@ short num_aliases;
 
 int main() {
     char input[MAX_INPUT_SIZE];
+    int redirect_output = 0, redirect_input = 0;
+    char *input_file = NULL, *output_file = NULL;
+
     while (1) {
         char cwd[MAX_CWD_SIZE];
         printf("%s%s%s$ ", ANSI_COLOR_BLUE, getcwd(cwd, MAX_CWD_SIZE), ANSI_COLOR_RESET);
@@ -24,14 +27,14 @@ int main() {
             perror("fgets failed");
             exit(EXIT_FAILURE);
         }
-        input[strcspn(input, "\n")] = '\0';
+        input[strcspn(input, "\n")] = '\0'; // Remove trailing newline
 
         strcpy(input, expand_alias(input));
 
         char *args[64];
         int num_args = 0;
 
-        tokenize(input, args, &num_args);
+        tokenize(input, args, &num_args, &redirect_input, &redirect_output, &input_file, &output_file);
 
         handle_command(args, cwd);
     }
