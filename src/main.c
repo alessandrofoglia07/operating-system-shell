@@ -7,10 +7,8 @@
 #include "commands.h"
 #include "utils.h"
 #include "aliases.h"
-
-#define MAX_INPUT_SIZE 1024
-#define MAX_CWD_SIZE 1024
-#define MAX_ARGS 64
+#include "common.h"
+#include "pipes.h"
 
 Alias aliases[MAX_ALIASES];
 short num_aliases;
@@ -30,6 +28,11 @@ int main() {
         input[strcspn(input, "\n")] = '\0'; // Remove trailing newline
 
         strcpy(input, expand_alias(input));
+
+        if (strchr(input, '|')) {
+            handle_pipes(input, cwd);
+            continue;
+        }
 
         char *args[64];
         int num_args = 0;

@@ -25,6 +25,9 @@ void tokenize(char *input, char **args, int *pNum_args, int *pRedirect_input, in
                 return;
             }
             *pInput_file = arg;
+        } else if (strcmp(arg, "|") == 0) {
+            // end current command
+            break;
         } else {
             args[(*pNum_args)++] = arg;
         }

@@ -12,7 +12,10 @@ set(RESOURCES src/main.c
         src/commands.c
         include/commands.h
         src/aliases.c
-        include/aliases.h)
+        include/aliases.h
+        include/common.h
+        src/pipes.c
+        include/pipes.h)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)
 
