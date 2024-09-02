@@ -41,6 +41,8 @@ $ cmake --build ./cmake-build-debug --target operating_system_shell -- -j 6
 $ ./build/operating_system_shell <ip>
 ```
 
+<img src="https://cloud-gts4uwzbv-hack-club-bot.vercel.app/0image.png"></img>
+
 ## License
 
 MIT
