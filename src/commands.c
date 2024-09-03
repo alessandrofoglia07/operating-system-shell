@@ -41,8 +41,12 @@ void handle_command(char **args, char *cwd, int *pRedirect_input, int *pRedirect
         return unset(args);
     }
 
+    if (strcmp(args[0], "cat") == 0) {
+        return cat(args);
+    }
+
     if (strcmp(args[0], "exit") == 0) {
-        return exit_shell(args);
+        return exit_shell();
     }
 
     run(args, pRedirect_input, pRedirect_output, pInput_file, pOutput_file);
@@ -77,6 +81,9 @@ void ls(char **args, const char *cwd) {
         return;
     }
     while ((entry = readdir(dir)) != NULL) {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+            continue;
+        }
         printf("%s ", entry->d_name);
     }
     printf("\n");
@@ -119,11 +126,21 @@ void unset(char **args) {
     }
 }
 
-void exit_shell(char **args) {
-    if (args[1] != NULL) {
-        fprintf(stderr, "exit: unexpected arguments\n");
+void cat(char **args) {
+    const char *filename = args[1];
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        fprintf(stderr, "cat: cannot open file\n");
         return;
     }
+    char line[256];
+    while (fgets(line, sizeof(line), file)) {
+        printf("%s", line);
+    }
+    fclose(file);
+}
+
+void exit_shell() {
     printf("Do you really want to exit? (y/n) ");
     const char c = getchar();
     if (toupper(c) == 'y') {
