@@ -8,6 +8,7 @@
 #include <sys/wait.h>
 #include <dirent.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 
 #include "ANSI_escapes.h"
 
@@ -43,6 +44,14 @@ void handle_command(char **args, char *cwd, int *pRedirect_input, int *pRedirect
 
     if (strcmp(args[0], "cat") == 0) {
         return cat(args);
+    }
+
+    if (strcmp(args[0], "mkdir") == 0) {
+        return mkdir_shell(args);
+    }
+
+    if (strcmp(args[0], "touch") == 0) {
+        return touch(args);
     }
 
     if (strcmp(args[0], "exit") == 0) {
@@ -138,6 +147,26 @@ void cat(char **args) {
         printf("%s", line);
     }
     fclose(file);
+}
+
+void mkdir_shell(char **args) {
+    if (args[1] == NULL) {
+        fprintf(stderr, "mkdir: missing argument\n");
+        return;
+    }
+    if (mkdir(args[1], 0777) < 0) {
+        perror("mkdir failed");
+    }
+}
+
+void touch(char **args) {
+    if (args[1] == NULL) {
+        fprintf(stderr, "touch: missing argument\n");
+        return;
+    }
+    if (creat(args[1], 0644) < 0) {
+        perror("creat failed");
+    }
 }
 
 void exit_shell() {

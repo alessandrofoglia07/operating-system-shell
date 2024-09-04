@@ -20,6 +20,10 @@ void unset(char **args);
 
 void cat(char **args);
 
+void mkdir_shell(char **args);
+
+void touch(char **args);
+
 void exit_shell();
 
 void run(char **args, int *pRedirect_input, int *pRedirect_output, char **pInput_file,
